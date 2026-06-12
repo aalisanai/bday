@@ -109,6 +109,10 @@
   /* ============ WINDOWS ============ */
   .winLayer { position: absolute; inset: 0; }
   .winLayer[hidden] { display: none; }
+  /* nudge each window so it sits horizontally centered on screen
+     (the original artboard placed them right-of-center) */
+  #layerNotes  { transform: translateX(-73px); }
+  #layerImages { transform: translateX(-41px); }
 
   .closeHint { left: 233px; top: 330px; font-size: 11px; white-space: nowrap; color:#000; }
 
