@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>happy bday Ian G ♡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Finger+Paint&family=Ubuntu+Sans:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root { --stage-w: 440px; --stage-h: 880px; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: #e9e6df;
+    font-family: 'Ubuntu Sans', system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  /* center + scale the phone stage to fit any window */
+  #fit {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #stage {
+    position: relative;
+    width: var(--stage-w);
+    height: var(--stage-h);
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    border-radius: 28px;
+    transform-origin: center center;
+  }
+
+  /* generic absolutely-positioned layer (Figma coords) */
+  .abs { position: absolute; }
+
+  .handwrite { font-family: 'Finger Paint', cursive; color: #000; }
+  .ui-label  { font-family: 'Ubuntu Sans', sans-serif; color: #000; }
+
+  /* ---- screens ---- */
+  .screen { position: absolute; inset: 0; }
+  .screen[hidden] { display: none; }
+
+  /* fade helper */
+  .fade-in { animation: fadeIn .5s ease both; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ============ START / computer ============ */
+  #computer {
+    left: -105px; top: 249px; width: 640px; height: 480px;
+    cursor: pointer;
+    filter: drop-shadow(8px 2px 0.3px rgba(0,0,0,0.25));
+    transition: transform .15s ease;
+  }
+  #computer img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  #computer:hover { transform: scale(1.015); }
+  #computer:active { transform: scale(0.985); }
+
+  #startHint {
+    left: 128px; top: 688px; font-size: 12px; white-space: nowrap;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+
+  /* ============ LOADING ============ */
+  #macosLogo { left: 4px; top: 322px; width: 436px; height: 333px; }
+  #macosLogo img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* fill sits INSIDE the empty progress box already drawn in macos.png */
+  #barWrap {
+    left: 130px; top: 619px; width: 142px; height: 16px;
+    transform: rotate(-0.6deg);
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  #barFill {
+    height: 100%; width: 0%;
+    background: repeating-linear-gradient(45deg,#9fb3dd 0 6px,#8298cf 6px 12px);
+    opacity: .9;
+  }
+  #barFill.go { animation: fillBar 3.1s cubic-bezier(.5,.05,.7,1) forwards; }
+  @keyframes fillBar { 0%{width:0%;} 100%{width:100%;} }
+
+  /* ============ DESKTOP ============ */
+  #deskBg { left: -11px; top: 229px; width: 487px; height: 487px; }
+  #deskBg img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+  /* icon = cropped sprite (replicates Figma container+scale crop) */
+  .icon { overflow: hidden; cursor: pointer; transition: transform .12s ease; }
+  .icon img { position: absolute; left: 0; top: 0; pointer-events: none; max-width: none; }
+  .icon:hover { transform: scale(1.06) rotate(-1deg); }
+  .icon:active { transform: scale(0.94); }
+
+  #iconNotes  { left: 17px; top: 380px; width: 96px; height: 62px; }
+  #iconNotes img  { width: 100%; height: 156.06%; }
+  #iconImages { left: 90px; top: 376px; width: 87px; height: 67px; }
+  #iconImages img { width: 100%; height: 129.11%; }
+
+  #lblNotes  { left: 49px;  top: 443px; width: 56px; font-size: 11px; }
+  #lblImages { left: 113px; top: 443px; width: 47px; font-size: 11px; }
+
+  /* ============ WINDOWS ============ */
+  .winLayer { position: absolute; inset: 0; }
+  .winLayer[hidden] { display: none; }
+
+  .closeHint { left: 233px; top: 330px; font-size: 11px; white-space: nowrap; color:#000; }
+
+  /* cropped window sprites */
+  .crop { position: absolute; overflow: hidden; }
+  .crop img { position: absolute; max-width: none; pointer-events: none; }
+
+  #winNotes   { left: 156px; top: 443px; width: 274px; height: 283px; }
+  #winNotes img   { left: -135.77%; top: -130.04%; width: 376.64%; height: 364.66%; }
+
+  #winImages  { left: 77px;  top: 460px; width: 368px; height: 378px; }
+  #winImages img  { left: -118.02%; top: -114.91%; width: 340.54%; height: 331.58%; }
+
+  #babyPhoto  { left: 160px; top: 511px; width: 224px; height: 289px; }
+  #babyPhoto img  { left: -32.73%; top: -47.42%; width: 154.1%; height: 213.88%; }
+
+  /* invisible red-dot close buttons (sit over the drawn red dot) */
+  .closeBtn { position: absolute; width: 69px; height: 18px; cursor: pointer; z-index: 5; }
+  .closeBtn::after {
+    content: ''; position: absolute; left: 2px; top: 2px; width: 13px; height: 13px;
+    border-radius: 50%;
+  }
+  .closeBtn:hover::after { box-shadow: 0 0 0 3px rgba(220,60,60,0.35); }
+  #closeNotesBtn  { left: 164px; top: 455px; }
+  #closeImagesBtn { left: 103px; top: 493px; }
+
+  .stickyNote { color:#000; font-size: 11px; white-space: nowrap; }
+  #lblBaby   { left: 177px; top: 496px; width: 239px; font-size: 11px; height: 15px; }
+  #lblTeQuiero { left: 119px; top: 545px; }
+  #lblAww      { left: 337px; top: 757px; }
+
+  /* window open pop */
+  .pop { animation: pop .28s cubic-bezier(.2,.9,.3,1.2) both; transform-origin: 20% 10%; }
+  @keyframes pop { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
+</style>
+</head>
+<body>
+  <div id="fit">
+    <div id="stage">
+
+      <!-- ================= SCREEN 1: START ================= -->
+      <section class="screen" id="screenStart">
+        <div class="abs" id="computer" onclick="boot()">
+          <img src="img/computer.png" alt="computer" />
+        </div>
+        <p class="abs handwrite" id="startHint">click on computer to get started</p>
+      </section>
+
+      <!-- ================= SCREEN 2: LOADING ================= -->
+      <section class="screen" id="screenLoading" hidden>
+        <div class="abs" id="macosLogo"><img src="img/macos.png" alt="Mac OS" /></div>
+        <div class="abs" id="barWrap"><div id="barFill"></div></div>
+      </section>
+
+      <!-- ================= SCREEN 3: DESKTOP ================= -->
+      <section class="screen" id="screenDesktop" hidden>
+        <div class="abs" id="deskBg"><img src="img/desktop.png" alt="desktop" /></div>
+
+        <div class="abs icon" id="iconNotes" onclick="openWin('notes')">
+          <img src="img/icon_notes.png" alt="notes" />
+        </div>
+        <p class="abs handwrite" id="lblNotes">notes</p>
+
+        <div class="abs icon" id="iconImages" onclick="openWin('images')">
+          <img src="img/icon_images.png" alt="images" />
+        </div>
+        <p class="abs handwrite" id="lblImages">images</p>
+
+        <!-- NOTES window -->
+        <div class="winLayer" id="layerNotes" hidden>
+          <div class="crop pop" id="winNotes"><img src="img/win_notes.png" alt="birthday letter" /></div>
+          <div class="closeBtn" id="closeNotesBtn" title="close" onclick="closeWin('notes')"></div>
+          <p class="abs handwrite closeHint">click red button to close window</p>
+        </div>
+
+        <!-- IMAGES window -->
+        <div class="winLayer" id="layerImages" hidden>
+          <div class="crop pop" id="winImages"><img src="img/win_images.png" alt="window" /></div>
+          <div class="crop pop" id="babyPhoto"><img src="img/baby.png" alt="baby photo" /></div>
+          <p class="abs handwrite stickyNote" id="lblBaby">only baby photo i have of u dumbahh pic</p>
+          <p class="abs handwrite stickyNote" id="lblTeQuiero">te quiero mua</p>
+          <p class="abs handwrite stickyNote" id="lblAww">aww :3</p>
+          <div class="closeBtn" id="closeImagesBtn" title="close" onclick="closeWin('images')"></div>
+          <p class="abs handwrite closeHint">click red button to close window</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+  // ---- click sound (synthesized, no asset needed) ----
+  let audioCtx;
+  function clickSound() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+
+      // crisp mouse-button "click" — very short, sharp plastic snap
+      const dur = 0.012;
+      const buf = audioCtx.createBuffer(1, Math.ceil(audioCtx.sampleRate * dur), audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) {
+        // very steep decay -> tight, snappy transient
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 9);
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buf;
+
+      // high-pass removes low thud; bandpass-ish gives the plasticky snap
+      const hp = audioCtx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 1400;
+      const peak = audioCtx.createBiquadFilter();
+      peak.type = 'peaking';
+      peak.frequency.value = 3500;
+      peak.Q.value = 0.9;
+      peak.gain.value = 6;
+      // gentle low-pass ceiling so it's crisp, not hissy
+      const lp = audioCtx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 6500;
+
+      const g = audioCtx.createGain();
+      g.gain.value = 0.16;
+
+      noise.connect(hp).connect(peak).connect(lp).connect(g).connect(audioCtx.destination);
+      noise.start(now);
+      noise.stop(now + dur);
+    } catch (e) { /* audio not available — ignore */ }
+  }
+  // play on any pointer press inside the stage
+  document.getElementById('stage').addEventListener('pointerdown', clickSound);
+
+  // ---- flow control ----
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.hidden = true);
+    const el = document.getElementById(id);
+    el.hidden = false;
+    el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in');
+  }
+
+  function boot() {
+    show('screenLoading');
+    const bar = document.getElementById('barFill');
+    bar.classList.remove('go'); void bar.offsetWidth; bar.classList.add('go');
+    setTimeout(() => show('screenDesktop'), 3300);
+  }
+
+  function openWin(which) {
+    // only one window open at a time
+    document.getElementById('layerNotes').hidden  = which !== 'notes';
+    document.getElementById('layerImages').hidden = which !== 'images';
+    const layer = document.getElementById(which === 'notes' ? 'layerNotes' : 'layerImages');
+    layer.querySelectorAll('.pop').forEach(p => { p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop'); });
+  }
+
+  function closeWin(which) {
+    document.getElementById(which === 'notes' ? 'layerNotes' : 'layerImages').hidden = true;
+  }
+
+  // ---- scale stage to fit window ----
+  function fitStage() {
+    const stage = document.getElementById('stage');
+    const pad = 24;
+    const sw = window.innerWidth - pad;
+    const sh = window.innerHeight - pad;
+    const scale = Math.min(sw / 440, sh / 880, 1.15);
+    stage.style.transform = 'scale(' + scale + ')';
+  }
+  window.addEventListener('resize', fitStage);
+  fitStage();
+
+  // start on the first screen
+  show('screenStart');
+</script>
+</body>
+</html>
