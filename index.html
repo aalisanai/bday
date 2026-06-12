@@ -14,7 +14,7 @@
 
   html, body {
     height: 100%;
-    background: #e9e6df;
+    background: #ffffff;
     font-family: 'Ubuntu Sans', system-ui, sans-serif;
     overflow: hidden;
   }
@@ -34,8 +34,6 @@
     height: var(--stage-h);
     background: #ffffff;
     overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
-    border-radius: 28px;
     transform-origin: center center;
   }
 
@@ -276,11 +274,11 @@
   // ---- scale stage to fit window (mobile-toolbar aware) ----
   function fitStage() {
     const stage = document.getElementById('stage');
-    const pad = 16;
     // visualViewport reflects the area actually visible above Safari's toolbars
     const vw = (window.visualViewport ? window.visualViewport.width  : window.innerWidth);
     const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
-    const scale = Math.min((vw - pad) / 440, (vh - pad) / 660, 1.3);
+    // fill the screen width fully; only shrink for height if content is taller than the screen
+    const scale = Math.min(vw / 440, vh / 660, 2);
     stage.style.transform = 'scale(' + scale + ')';
   }
   window.addEventListener('resize', fitStage);
